@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html> <font size="5">
+<head>
+  <title>Interview: Puppet</title>
+  <script>document.createElement("myHero")</script>
+  <style>
+    myHero {
+      display:  block;
+      background-color: #ddd;
+      padding: 10px;
+      font-size: 5;
+    }
+  footer {
+   color:black;backgroud-color:#ddd;font-size:12px;margin-bottom:5px;
+  }
+  .bottom-three {
+    margin-bottom: 13cm;
+  }
+  </style>
+</head>
+<body>
+<h1><center>Introduction to Puppet </center></h1>
+<h5><center>(...in 5 minutes) </center></h5>
+<h4>What is Puppet?</h4>
+<ul>
+<li>Configuration Management. Similar to Chef, Ansible, Salt.
+<li>Declaration Language to decribe "to-be" configuration, not "to-do."
+<li>Available from Puppet Labs in Open-source and Enterprise version.
+<li>Company started in 2005.  Commerical version available since 2011.
+<li>Latest open-source version is 4.1.
+</ul>
+<p class="bottom-three">
+<h4>What does Declarative Language look like?</h4>
+<pre>
+  class apache {
+
+     package { 'apache2':
+       ensure => installed
+    }
+
+  }
+
+
+
+  class compiler {
+
+     package { 'gcc':
+       ensure => absent
+    }
+
+  }
+
+
+
+  class ssh {
+
+     package { 'openssh-servver':
+       ensure => latest
+    }
+
+  }
+</pre>
+<ul>
+<li>Not telling how to install it. Just that you want it installed or not installed.
+<li>In a class, you define one or more resources.
+<li>Then you associate a class to a host or a group of hosts.
+</ul>
+<p class="bottom-three">
+<h4>Another example</h4>
+<pre>
+class sshserver {
+
+   package { 'openssh-server' :
+     ensure => installed
+   }
+
+   file { '/etc/ssh/sshd_config':
+     source => 'puppet:///modules/ssh/sshd_config',
+     require => Package['openssh-server'],
+     notify  => Service['ssh'],
+   }
+
+   service { 'ssh':
+     ensure => running,
+     enable => true,
+   }
+}
+
+</pre>
+<ul>
+<li>Common resources: package, file, service.
+<li>Other resources: cron, host, mount, user.
+</ul>
+<p class="bottom-three">
+<h4>How to install Puppet?</h4>
+<ul>
+<li>Server: install puppetserver  (TCP/8140) - Linux only.
+<li>Client: install puppet-agent - Linux, Solaris, Windows. Also Cisco, F5, and more.
+</ul>
+<pre>
+apt-get install puppet-agent
+</pre>
+<p class="bottom-three">
+<h4>How to use Puppet?</h4>
+<ul>
+<li>On the puppetserver, associate a client with a class.
+<pre>
+node 'www1.example.com' {
+  include common
+  include apache
+  include squid
+}
+node 'db1.example.com' {
+  include common
+  include mysql
+}
+</pre>
+<li>Every 30 mins, client checks in with server, receives the configuration catalog from the puppetserver, and enforces the configuration on itself (and sends report to puppetserver).
+<li>Any drift in configuration will be corrected.
+</ul>
+<pre>
+puppet agent --test
+
+
+Jun 22 10:36:54 clienthost puppet-agent[8697]: Applied catalog in 1.65 seconds
+
+</pre>
+<p class="bottom-three">
+<h4>Why use Puppet?</h4>
+<ul>
+<li>You can manage more servers with less people.
+<li>Can have different configurations according to roles or types of servers, etc.
+<li>Provide confidence that servers are the way they should be.
+<li>Easy to audit.
+</ul>
+<p class="bottom-three">
+<h4>To get more information...</h4>
+<ul>
+<li>https://docs.puppetlabs.com
+</ul>
+
+<p class="bottom-three">
+<footer>&copy; 2015 Peter Ganthavorn.
+</footer></body></font> </html>
